@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class DecisionTree:
     
     def __init__(self):
@@ -43,6 +44,31 @@ class DecisionTree:
     def __calculate_information_gain(self, left_count, left_impurity, right_count, right_impurity):
         return self.information_gain - (((left_count)/(len(self.data))) * left_impurity \
                                         + (((right_count)/(len(self.data)))* right_impurity))
+        
+    def __find_best_split(self):
+        best_split = {}
+        for col in self.independent:
+            information_gain, split = self.__find_best_split_for_column(col)
+            if split is None:
+                continue
+            
+            if not best_split or best_split["information_gain"] < information_gain:
+                best_split = {"split" : split,
+                              "col" : col,
+                              "information_gain" : information_gain}
+                
+        return best_split["split"],  best_split["col"]
+    
+    
+    def __create_branches(self):
+        self.left = DecisionTree()
+        self.right = DecisionTree()
+        
+        left_rows = self.data[self.data[self.split_feature]] <= self.criteria
+        right_rows = self.data[self.data[self.split_feature]] > self.criteria
+        
+        self.left.fit(data = left_rows, target = self.target)
+        self.right.fit(data = right_rows, target = self.target)
         
     def fit(self, data, target):
         self.data = data

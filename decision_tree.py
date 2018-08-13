@@ -1,11 +1,12 @@
 import numpy as np
 
-
 class DecisionTree:
     
-    def __init__(self):
+    def __init__(self, max_depth = 4, depth = 1):
         self.left = None
         self.right = None
+        self.max_depth = max_depth
+        self.depth = depth
         
     def __calculate_impurity_score(self, data):
         if data is None or data.empty: return 0
@@ -61,8 +62,8 @@ class DecisionTree:
     
     
     def __create_branches(self):
-        self.left = DecisionTree()
-        self.right = DecisionTree()
+        self.left = DecisionTree(self.max_depth, self.depth + 1)
+        self.right = DecisionTree(self.max_depth, self.depth + 1)
         
         left_rows = self.data[self.data[self.split_feature]] <= self.criteria
         right_rows = self.data[self.data[self.split_feature]] > self.criteria
